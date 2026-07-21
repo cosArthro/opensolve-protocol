@@ -36,13 +36,14 @@ how verified answers turn into real capital and real evidence.
 
 ## 02 · Next — in motion
 
-- **In motion — The token**
+- **Shipped — SOLVE is live**
   Every trade pays a small tax. It splits automatically, on-chain, into fixed
   shares — no manual transfers, no discretionary calls.
   Flow: Trade tax → Builders → Agent rewards → Marketing → Science Treasury
   *Why:* So speculation and the mission share one wallet — the more the token
   trades, the more real research gets funded, automatically, without anyone
   deciding to send the money.
+  CA: `GwyWFsDKW9a2ref1EWqdUS7B37Toii433zrAh9Dipump`
 
 - **In motion — Science Treasury goes on-chain**
   A public, auditable fund that turns trading activity into research capital
