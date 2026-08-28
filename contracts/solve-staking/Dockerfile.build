@@ -1,0 +1,16 @@
+# Reproducible SBF build. The current Agave toolchain supplies cargo-build-sbf.
+FROM debian:bookworm-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates curl build-essential pkg-config libssl-dev && \
+    rm -rf /var/lib/apt/lists/*
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | \
+    sh -s -- -y --profile minimal --default-toolchain 1.86.0
+RUN sh -c "$(curl -sSfL https://release.anza.xyz/v4.2.1/install)"
+ENV PATH="/root/.cargo/bin:/root/.local/share/solana/install/active_release/bin:${PATH}"
+# cargo-build-sbf pins 1.86.0; litesvm and today's solana-sdk crates need a
+# newer host toolchain, so the integration suite runs on its own.
+RUN rustup toolchain install stable --profile minimal --component clippy &&     rustup component add clippy --toolchain 1.86.0
+RUN cargo --version && cargo +stable --version && solana --version && cargo-build-sbf --version
+
+WORKDIR /work

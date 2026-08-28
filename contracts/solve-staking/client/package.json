@@ -1,0 +1,15 @@
+{
+  "name": "solve-staking-client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Minimal CLI for driving the SOLVE staking program on a local validator or devnet",
+  "bin": { "solve-staking": "./solve-staking.mjs" },
+  "dependencies": {
+    "@solana/web3.js": "^1.98.0"
+  },
+  "comment": "rpc-websockets, a transitive dependency, resolves uuid to an ESM-only release that Node 20 cannot require(). Pinning uuid to the last CommonJS line keeps this runnable on the Node already installed here.",
+  "overrides": {
+    "uuid": "^9.0.1"
+  }
+}

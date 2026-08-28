@@ -1,0 +1,11 @@
+/target/
+/.keys/
+# The repository root re-includes everything under contracts/solve-staking with
+# a negation rule, so the usual global node_modules ignore does not reach here.
+/client/node_modules/
+/client/*.json.bak
+# Token-account fixtures carry wallet addresses and balances for a throwaway
+# validator; regenerate them with `solve-staking.mjs fixture` instead.
+/client/*-tokens.json
+/client/alice.json
+/client/authority.json

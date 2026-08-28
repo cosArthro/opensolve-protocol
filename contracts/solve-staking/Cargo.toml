@@ -1,0 +1,53 @@
+[package]
+name = "solve-staking"
+version = "0.1.0"
+edition = "2021"
+description = "Minimal Token-2022 staking program for SOLVE"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[features]
+no-entrypoint = []
+# Swaps the funding authority for a publicly known test keypair. Integration
+# tests only — never in a binary that will be deployed.
+test-authority = []
+# Shrinks the three-day hold to three minutes and the seven-day smoothing
+# window to seven minutes, so a full lifecycle can be driven against a real
+# validator in one sitting. The program never reads how long either is, only
+# compares timestamps, so the exercised code path is identical. Local
+# validator and devnet only — `scripts/build.ps1` refuses to hand over a
+# binary carrying its marker.
+fast-clock = []
+# Points SOLVE_MINT at a throwaway devnet mint. The real mint is a mainnet
+# pump.fun address that cannot be recreated on another cluster, so a devnet
+# deployment needs its own. Same marker rule as the features above.
+devnet-mint = []
+
+[dependencies]
+solana-program = { version = "2.2", default-features = false }
+solana-sdk-ids = "2.2"
+solana-system-interface = { version = "1", features = ["bincode"] }
+
+[dev-dependencies]
+# Matches the Agave 4.2.1 toolchain in Dockerfile.build, so the whole
+# dependency tree resolves to one coherent release.
+solana-program-test = { version = "4.2.1", features = ["agave-unstable-api"] }
+solana-sdk = "4"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+
+# The entrypoint! macro from solana-program expands to these, so declare them
+# rather than switching the whole unexpected_cfgs lint off.
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = [
+    'cfg(target_os, values("solana"))',
+    'cfg(feature, values("custom-heap", "custom-panic"))',
+] }
+
+[profile.release]
+opt-level = "z"
+overflow-checks = true
+lto = "fat"
+codegen-units = 1
+strip = true
+panic = "abort"
