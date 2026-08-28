@@ -11,13 +11,21 @@ param(
 $ErrorActionPreference = "Stop"
 $project = (Resolve-Path "$PSScriptRoot\..").Path
 $image = "solve-staking-build:latest"
+# The program keypair only names the address a deploy publishes to; the
+# bytecode does not depend on it in any way. Requiring it here made the build
+# impossible for the one audience that matters most — someone checking the
+# published hash against this source, who will never have our private key.
+# Missing is therefore a note, not a failure. Deploying without it is the case
+# that must not pass silently, and `solana program deploy --program-id` is
+# where that is caught.
 $programKey = Join-Path $project ".keys\solve_staking-keypair.json"
-if (-not (Test-Path $programKey)) {
-    throw "Missing $programKey. Generate it once and keep it backed up outside Git."
-}
 $deployDir = Join-Path $project "target\deploy"
 New-Item -ItemType Directory -Force $deployDir | Out-Null
-Copy-Item -LiteralPath $programKey -Destination (Join-Path $deployDir "solve_staking-keypair.json") -Force
+if (Test-Path $programKey) {
+    Copy-Item -LiteralPath $programKey -Destination (Join-Path $deployDir "solve_staking-keypair.json") -Force
+} else {
+    Write-Host "no .keys/solve_staking-keypair.json - building anyway, the bytecode does not depend on it (it is needed only to deploy)"
+}
 
 docker build -f "$project\Dockerfile.build" -t $image $project
 # No --features: a deployable binary must carry the real funding authority.
